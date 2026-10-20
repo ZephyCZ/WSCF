@@ -1,9 +1,10 @@
-using System.Collections.Generic;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace Thinktecture.Tools.Web.Services.CodeGeneration
 {
@@ -167,7 +168,11 @@ namespace Thinktecture.Tools.Web.Services.CodeGeneration
             try
             {
                 // Write out the code to the destination file.
-                provider.GenerateCodeFromNamespace(codeNamespace, writer, codeGenerationOptions);
+                StringWriter stringWriter = new StringWriter();
+                provider.GenerateCodeFromNamespace(codeNamespace, stringWriter, codeGenerationOptions);
+                string code = stringWriter.ToString();
+                code = MergeBrokenStringLiterals(code);
+                writer.Write(code);
                 // Flush all buffers in the writer.
                 writer.Flush();
                 codeFilesCount = 1;
@@ -222,7 +227,11 @@ namespace Thinktecture.Tools.Web.Services.CodeGeneration
                 try
                 {
                     // Write out the code to the destination file.
-                    provider.GenerateCodeFromNamespace(tempns, writer, codeGenerationOptions);
+                    StringWriter stringWriter = new StringWriter();
+                    provider.GenerateCodeFromNamespace(tempns, stringWriter, codeGenerationOptions);
+                    string code = stringWriter.ToString();
+                    code = MergeBrokenStringLiterals(code);
+                    writer.Write(code);
                     // Flush all buffers in the writer.
                     writer.Flush();
                     // Finally add the file name to the generated file names array.
@@ -370,6 +379,19 @@ namespace Thinktecture.Tools.Web.Services.CodeGeneration
             }
         }
 
+        private static string MergeBrokenStringLiterals(string code)
+        {
+            Regex regex = new Regex(
+                "\"([^\"]*)\"\\s*\\+\\s*\\r?\\n\\s*\"([^\"]*)\"",
+                RegexOptions.Multiline);
+
+            while (regex.IsMatch(code))
+            {
+                code = regex.Replace(code, "\"$1$2\"");
+            }
+
+            return code;
+        }
         #endregion
     }
 }
