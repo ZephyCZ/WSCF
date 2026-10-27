@@ -42,18 +42,18 @@ namespace Thinktecture.Tools.Web.Services.CodeGeneration.Decorators
 
 				foreach (CodeAttributeDeclaration faultAttribute in method.FindAttributes("System.ServiceModel.FaultContractAttribute"))
 				{
-					FormatActions(method, faultAttribute, serviceNamespace, serviceName, options);					
+					FormatActions(method, faultAttribute, serviceNamespace, serviceName, options, isFault: true);					
 				}
 			}
 		}
 
 		private static void FormatActions(AttributableCodeDomObject method, CodeAttributeDeclaration targetAttribute, string serviceNamespace, string serviceName, 
-			CustomCodeGenerationOptions options)
+			CustomCodeGenerationOptions options, bool isFault = false)
 		{
 			serviceNamespace = serviceNamespace.TrimEnd('/');
 			string operationName = method.ExtendedObject.Name;
-
-			CodeAttributeArgument asyncPatternArgument = targetAttribute.FindArgument("AsyncPattern");
+			string faultSuffix = isFault ? "Fault" : string.Empty;
+            CodeAttributeArgument asyncPatternArgument = targetAttribute.FindArgument("AsyncPattern");
 			if (asyncPatternArgument != null)
 			{
 				CodePrimitiveExpression value = asyncPatternArgument.Value as CodePrimitiveExpression;
@@ -66,9 +66,9 @@ namespace Thinktecture.Tools.Web.Services.CodeGeneration.Decorators
 			CodeAttributeArgument actionArgument = targetAttribute.FindArgument("Action");
 			if (actionArgument != null)
 			{
-                string action = string.Format("{0}:{1}", serviceNamespace, operationName);
+                string action = string.Format("{0}:{1}{2}", serviceNamespace, operationName, faultSuffix);
                 if (options.FormatSoapActions)
-                    action = string.Format("{0}/{1}/{2}", serviceNamespace, serviceName, operationName);
+                    action = string.Format("{0}/{1}/{2}{3}", serviceNamespace, serviceName, operationName, faultSuffix);
 				
 				actionArgument.Value = new CodePrimitiveExpression(action);
 			}
@@ -76,13 +76,11 @@ namespace Thinktecture.Tools.Web.Services.CodeGeneration.Decorators
 			CodeAttributeArgument replyArgument = targetAttribute.FindArgument("ReplyAction");
 			if (replyArgument != null)
 			{
-				if (options.FormatSoapActions)
-                {
-                    string action = string.Format("{0}/{1}/{2}Response", serviceNamespace, serviceName, operationName);
-					replyArgument.Value = new CodePrimitiveExpression(action);
-                }
-				else
-                    targetAttribute.Arguments.Remove(replyArgument);
+                string action = string.Format("{0}:{1}Response", serviceNamespace, operationName);
+                if (options.FormatSoapActions)
+                    action = string.Format("{0}/{1}/{2}Response", serviceNamespace, serviceName, operationName);
+
+				replyArgument.Value = new CodePrimitiveExpression(action);
             }
 		}
 	}
