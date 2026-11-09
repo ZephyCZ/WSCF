@@ -34,4 +34,4 @@ For the endpoints and the client proxy, WSCF also generates the necessary config
 
 ## Download ##
 
-Release Notes and VSIX package downloads are available on the [GitHub Releases](https://github.com/WSCF/WSCF/releases) page.
+Release Notes and VSIX package downloads are available on the [GitHub Releases](https://github.com/ZephyCZ/WSCF/releases) page.
