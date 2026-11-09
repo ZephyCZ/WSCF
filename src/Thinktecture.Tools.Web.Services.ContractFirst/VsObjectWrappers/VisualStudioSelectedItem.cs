@@ -15,6 +15,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.VsObjectWrappers
 
         public VisualStudioSelectedItem(SelectedItem selectedItem)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             this.selectedItem = selectedItem;
             Initialize();
         }
@@ -112,6 +113,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.VsObjectWrappers
 
         private void Initialize()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             ExtractFileNames();
         }
 

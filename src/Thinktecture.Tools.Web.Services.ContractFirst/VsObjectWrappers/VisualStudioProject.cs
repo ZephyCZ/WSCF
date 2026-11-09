@@ -51,7 +51,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.VsObjectWrappers
         {
             get
             {
-                return (IsWebProject) ? GetWebProjectLanguage() : GetProjectLanguage();
+                ThreadHelper.ThrowIfNotOnUIThread(); return (IsWebProject) ? GetWebProjectLanguage() : GetProjectLanguage();
             }
         }
 
@@ -59,7 +59,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.VsObjectWrappers
         {
             get
             {
-                return GetProjectProperty("DefaultNamespace");
+                ThreadHelper.ThrowIfNotOnUIThread(); return GetProjectProperty("DefaultNamespace");
             }
         }
 
@@ -67,7 +67,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.VsObjectWrappers
         {
             get
             {
-                return GetProjectProperty("FullPath");
+                ThreadHelper.ThrowIfNotOnUIThread(); return GetProjectProperty("FullPath");
             }
         }
 
@@ -75,7 +75,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.VsObjectWrappers
         {
             get
             {
-                return GetProjectProperty("AssemblyName");
+                ThreadHelper.ThrowIfNotOnUIThread(); return GetProjectProperty("AssemblyName");
             }
         }
 
@@ -131,6 +131,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.VsObjectWrappers
 
         public string GetDefaultDestinationFilename(string fileName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             string baseFileName = Path.GetFileNameWithoutExtension(fileName);
             string extension = (ProjectLanguage == CodeLanguage.VisualBasic) ? "vb" : "cs";
             return Path.ChangeExtension(baseFileName, extension);
@@ -155,6 +156,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.VsObjectWrappers
 
         private CodeLanguage GetWebProjectLanguage()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             string language = GetProjectProperty("CurrentWebSiteLanguage");
 
             switch (language)

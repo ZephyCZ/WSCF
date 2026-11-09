@@ -9,11 +9,13 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.MenuItems.SolutionExplor
     {
         private static void BeforeQueryStatus(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (sender is OleMenuCommand menu) menu.Visible = IsVisible();
         }
 
         private static bool IsVisible()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return CreateWsdlMenuItem.IsVisible() ||
                    EditWsdlMenuItem.IsVisible() ||
                    CreateDataContractCodeMenuItem.IsVisible();

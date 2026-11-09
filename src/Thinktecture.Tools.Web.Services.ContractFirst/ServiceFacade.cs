@@ -1,3 +1,5 @@
+using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +9,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
-using EnvDTE80;
 using Thinktecture.Tools.Web.Services.CodeGeneration;
 using Thinktecture.Tools.Web.Services.ContractFirst.VsObjectWrappers;
 using Thinktecture.Tools.Web.Services.WsdlWizard;
@@ -44,6 +45,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
 
         public bool ExecuteCommand(WscfCommand command)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try
             {
                 AppLog.LogMessage($"Entering {nameof(this.ExecuteCommand)} method.");
@@ -74,6 +76,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
 
         private bool ProcessWsdlWizardRequest(bool roundtrip)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             VisualStudioSelectedItem selectedItem = this.VisualStudio.SelectedItem;
             if (selectedItem == null)
             {
@@ -146,6 +149,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
         // This method is not current being used.
         private bool ProcessXsdCodeGenerationRequest()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (!CanGenerateCode())
             {
                 return false;
@@ -240,6 +244,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
         /// <returns></returns>
         public bool ProcessCodeGenerationRequest(string wsdlFile)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (!File.Exists(wsdlFile))
             {
                 return false;
@@ -257,6 +262,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
         /// <returns></returns>
         private bool ProcessCodeGenerationRequest()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (!CanGenerateCode())
             {
                 return false;
@@ -276,6 +282,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
 
         private bool ProcessCodeGenerationRequestCore(string wsdlFile)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try
             {
                 VisualStudioProject project = this.VisualStudio.SelectedProject;
@@ -376,6 +383,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
 
         private bool ProcessPasteSchemaRequest()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try
             {
                 if (VisualStudio.SelectedProject == null)
@@ -481,6 +489,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
 
         private void AddGeneratedFilesToProject(CodeWriterOutput output)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             foreach (string file in output.CodeFileNames)
             {
                 AddFileToCurrentProject(file);
@@ -493,12 +502,14 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
 
         private void AddFileToCurrentProject(string file)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             VisualStudioProject project = this.VisualStudio.SelectedProject;
             project.AddFile(file);
         }
 
         private bool CanGenerateCode()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             // Do we have a project?
             if (VisualStudio.SelectedProject == null)
             {
@@ -510,6 +521,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
 
         private string GetOutputDirectory()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             VisualStudioSelectedItem selectedItem = this.VisualStudio.SelectedItem;
             VisualStudioProject project = selectedItem.ParentProject;
             string outputDirectory;
@@ -536,6 +548,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
 
         private void AddAssemblyReferences()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             VisualStudioProject project = VisualStudio.SelectedProject;
             project.AddReference("System");
             project.AddReference("System.Xml");
@@ -549,6 +562,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst
         /// </summary>
         private void AddMetadataExtensionsReference()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             string addinDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string extensionPath = Path.Combine(addinDirectory, "Thinktecture.ServiceModel.Extensions.Metadata.dll");
 

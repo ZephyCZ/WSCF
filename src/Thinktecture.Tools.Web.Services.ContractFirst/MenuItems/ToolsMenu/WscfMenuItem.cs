@@ -9,6 +9,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.MenuItems.ToolsMenu
     {
         private static void BeforeQueryStatus(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (sender is OleMenuCommand menu) menu.Visible = IsVisible();
         }
 
@@ -19,6 +20,7 @@ namespace Thinktecture.Tools.Web.Services.ContractFirst.MenuItems.ToolsMenu
 
         private static void MenuItemCallbackHandler(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             VSPackage.ServiceFacade.ExecuteCommand(WscfCommand.GenerateWebServiceCode);
         }
 
